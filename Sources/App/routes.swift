@@ -25,6 +25,8 @@ public func routes(_ router: Router) throws {
     router.get("vortoj", Int.parameter, "radikoj", use: vortoT.radikoj)
     router.get("vortoj", Int.parameter, "idoj", use: vortoT.idoj)
 
+    router.get("trovi", String.parameter, use: vortoT.ŝerĉi)
+
     // Pravadoj
     router.get("sql") { req in
         return req.withPooledConnection(to: .psql) { conn in

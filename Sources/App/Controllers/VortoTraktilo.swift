@@ -1,4 +1,10 @@
 import Vapor
+import FluentPostgreSQL
+
+struct Rezulto: Content {
+  let signifoj: [Signifo]
+  let vortoj: [Vorto]
+}
 
 final class VortoTraktilo {
   func listi(_ req: Request) throws -> Future<[Vorto]> {
@@ -29,6 +35,26 @@ final class VortoTraktilo {
     )
     return vorto.flatMap { vorto in
       return try vorto.idoj.query(on: req).all()
+    }
+  }
+
+  func ŝerĉi(_ req: Request) throws -> Future<Rezulto> {
+    let ŝerĉo = try req.parameters.next(String.self)
+    let vortoj = Vorto.query(on: req).range(..<5).filter(
+      \.vorto,
+      .like,
+      "%\(ŝerĉo)%"
+    ).all()
+    let signifoj = Signifo.query(on: req).range(..<5).filter(
+      \.signifo,
+      .like,
+      "%\(ŝerĉo)%"
+    ).all()
+    return vortoj.and(signifoj).map { vortoj, signifoj in
+      return Rezulto(
+        signifoj: signifoj,
+        vortoj: vortoj
+      )
     }
   }
 }
