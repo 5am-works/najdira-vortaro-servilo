@@ -20,6 +20,11 @@ public func routes(_ router: Router) throws {
     router.get("signifoj", use: signifoT.listi)
     router.get("signifoj", Int.parameter, "vortoj", use: signifoT.vortoj)
 
+    let vortoT = VortoTraktilo()
+    router.get("vortoj", use: vortoT.listi)
+    router.get("vortoj", Int.parameter, "radikoj", use: vortoT.radikoj)
+    router.get("vortoj", Int.parameter, "idoj", use: vortoT.idoj)
+
     // Pravadoj
     router.get("sql") { req in
         return req.withPooledConnection(to: .psql) { conn in

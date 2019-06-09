@@ -14,6 +14,14 @@ final class Vorto: PostgreSQLModel {
         return parent(\.signifoID)
     }
 
+    var radikoj: Siblings<Vorto, Vorto, Radiko> {
+        return siblings(Radiko.rightIDKey, Radiko.leftIDKey)
+    }
+
+    var idoj: Siblings<Vorto, Vorto, Radiko> {
+        return siblings(Radiko.leftIDKey, Radiko.rightIDKey)
+    }
+
     enum CodingKeys: String, CodingKey {
         case id
         case vorto
