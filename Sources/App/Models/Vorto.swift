@@ -6,9 +6,9 @@ final class Vorto: PostgreSQLModel {
     static let entity = "vortoj"
 
     var id: Int?
-    var vorto: String
-    var ecoj: UInt8
-    var signifoID: Int
+    var vorto: String = ""
+    var ecoj: UInt8 = 0
+    var signifoID: Int = 0
 
     var signifo: Parent<Vorto, Signifo> {
         return parent(\.signifoID)

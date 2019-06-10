@@ -6,7 +6,7 @@ final class Signifo: PostgreSQLModel {
     static let entity = "signifoj"
 
     var id: Int?
-    var signifo: String
+    var signifo: String = ""
 
     var vortoj: Children<Signifo, Vorto> {
         return children(\.signifoID)
