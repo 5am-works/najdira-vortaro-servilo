@@ -1,14 +1,24 @@
 import Vapor
 import FluentPostgreSQL
 
-struct Rezulto: Content {
-  let signifoj: [Signifo]
-  let vortoj: [Vorto]
-}
-
 final class VortoTraktilo {
   func listi(_ req: Request) throws -> Future<[Vorto]> {
     return Vorto.query(on: req).all()
+  }
+
+  func listiKunSignifoj(_ req: Request) throws -> Future<[VortoKajSignifo]> {
+    return Vorto.query(on: req)
+      .join(\Signifo.id, to: \Vorto.signifoID)
+      .alsoDecode(Signifo.self).all()
+      .map { rezultoj in
+        return rezultoj.map { vs in
+          return VortoKajSignifo(
+            vorto: vs.0.vorto,
+            ecoj: vs.0.ecoj,
+            signifo: vs.1.signifo
+          )
+        }
+      }
   }
 
   func trovi(_ req: Request) throws -> Future<Vorto> {
