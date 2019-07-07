@@ -25,6 +25,7 @@ public func routes(_ router: Router) throws {
     router.get("vortoj", Int.parameter, "radikoj", use: vortoT.radikoj)
     router.get("vortoj", Int.parameter, "idoj", use: vortoT.idoj)
 
+    router.get("informi", String.parameter, use: vortoT.informo)
     router.get("indekso", use: vortoT.listiKunSignifoj)
     router.get("trovi", String.parameter, use: vortoT.ŝerĉi)
 

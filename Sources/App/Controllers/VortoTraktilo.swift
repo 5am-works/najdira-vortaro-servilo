@@ -28,6 +28,31 @@ final class VortoTraktilo {
     )
   }
 
+  func informo(_ req: Request) throws -> Future<VortoInformo> {
+    let v = try req.parameters.next(String.self)
+    let vorto = Vorto.query(on: req).filter(\.vorto == v).first().unwrap(
+      or: Abort(.notFound, reason: "Vorto ne trovita")
+    )
+    return vorto.flatMap { vorto in
+      let signifo = vorto.signifo.get(on: req)
+      let radikoj = try vorto.radikoj.query(on: req).all()
+      let idoj = try vorto.idoj.query(on: req).all()
+      return signifo.flatMap { signifo in
+        let egalvortoj = try signifo.vortoj.query(on: req).all()
+        return radikoj.and(idoj).and(egalvortoj).map { ri, egalvortoj in
+          return VortoInformo(
+            vorto: vorto.vorto,
+            ecoj: vorto.ecoj,
+            signifo: signifo.signifo,
+            egalvortoj: egalvortoj.map { $0.vorto },
+            radikoj: ri.0.map { $0.vorto },
+            idoj: ri.1.map { $0.vorto }
+          )
+        }
+      }
+    }
+  }
+
   func radikoj(_ req: Request) throws -> Future<[Vorto]> {
     let id = try req.parameters.next(Int.self)
     let vorto = Vorto.find(id, on: req).unwrap(
