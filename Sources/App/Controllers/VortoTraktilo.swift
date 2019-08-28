@@ -39,12 +39,12 @@ final class VortoTraktilo {
       let idoj = try vorto.idoj.query(on: req).all()
       return signifo.flatMap { signifo in
         let egalvortoj = try signifo.vortoj.query(on: req).all()
-        return radikoj.and(idoj).and(egalvortoj).map { ri, egalvortoj in
+        return radikoj.and(idoj).and(egalvortoj).map { (ri: ([Vorto], [Vorto]), egalvortoj: [Vorto]) -> VortoInformo in
           return VortoInformo(
             vorto: vorto.vorto,
             ecoj: vorto.ecoj,
             signifo: signifo.signifo,
-            egalvortoj: egalvortoj.map { $0.vorto },
+            egalvortoj: egalvortoj.filter{ $0.id != vorto.id }.map { $0.vorto },
             radikoj: ri.0.map { $0.vorto },
             idoj: ri.1.map { $0.vorto }
           )
