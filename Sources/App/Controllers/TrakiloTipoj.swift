@@ -1,8 +1,8 @@
 import Vapor
 
 struct Rezulto: Content {
-  let signifoj: [Signifo]
-  let vortoj: [Vorto]
+  let signifoj: [String]
+  let vortoj: [String]
 }
 
 struct VortoKajSignifo: Content {

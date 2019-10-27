@@ -1,18 +1,9 @@
-import FluentPostgreSQL
 import Vapor
 
-final class Signifo: PostgreSQLModel {
-    static let name = "signifo"
-    static let entity = "signifoj"
+final class Signifo {
+	let signifo: String
 
-    var id: Int?
-    var signifo: String = ""
-
-    var vortoj: Children<Signifo, Vorto> {
-        return children(\.signifoID)
-    }
-}
-
-extension Signifo: Content {
-  
+	init(_ signifo: String) {
+		self.signifo = signifo
+	}
 }

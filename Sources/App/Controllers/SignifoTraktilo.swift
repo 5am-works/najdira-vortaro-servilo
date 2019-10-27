@@ -1,15 +1,12 @@
 import Vapor
 
 final class SignifoTraktilo {
-  func listi(_ req: Request) throws -> Future<[Signifo]> {
-    return Signifo.query(on: req).all()
-  }
-
-  func vortoj(_ req: Request) throws -> Future<[Vorto]> {
+  func vortoj(_ req: Request) throws -> Future<[String]> {
     let id = try req.parameters.next(Int.self)
-    let signifo = Signifo.find(id, on: req)
-    return signifo.flatMap { signifo in
-      return try signifo!.vortoj.query(on: req).all()
+    let v = try req.make(VortaroServico.self).ŝarĝi(per: req)
+    return v.map { vortaro in
+      let signifo = vortaro.signifoj[id]
+      return vortaro.vortoj.filter { $0.signifo === signifo }.map { $0.vorto }
     }
   }
 }
