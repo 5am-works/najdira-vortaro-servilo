@@ -14,7 +14,7 @@ final class VortoTraktilo {
       return vortaro.vortoj.map { vorto in
         return VortoKajSignifo(
           vorto: vorto.vorto,
-          ecoj: vorto.ecoj,
+          ecoj: vorto.signifo.ecoj,
           signifo: vorto.signifo.signifo
         )
       }
@@ -31,7 +31,7 @@ final class VortoTraktilo {
       }
       return VortoInformo(
         vorto: vorto.vorto,
-        ecoj: vorto.ecoj,
+        ecoj: vorto.signifo.ecoj,
         signifo: vorto.signifo.signifo,
         egalvortoj: [],
         radikoj: vorto.radikoj.map { $0.vorto },

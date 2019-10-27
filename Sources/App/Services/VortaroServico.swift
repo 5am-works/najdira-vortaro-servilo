@@ -2,7 +2,7 @@ import Vapor
 
 class VortaroServico: Service {
 	static let fonto =
-		"https://raw.githubusercontent.com/Najdira/Najdira-redaktilo/master/vortaro"
+		"https://raw.githubusercontent.com/Najdira/Najdira-redaktilo/master/out"
 	var vortaro: Vortaro? = nil
 
 	func ŝarĝi(per container: Container, reŝarĝi: Bool = false) throws -> Future<Vortaro> {
@@ -13,12 +13,19 @@ class VortaroServico: Service {
 			return peto.map { respondo in
 				logger.info("Respondo ricevis: \(respondo.http.status)")
 				let korpo = respondo.http.body
-				let partoj = String(bytes: korpo.data!,
-					encoding: String.Encoding.utf8)!.components(separatedBy: "\n\n")
+				let partoj = String(
+					bytes: korpo.data!,
+					encoding: String.Encoding.utf8
+				)!.components(separatedBy: "\n\n")
 				logger.info("Longeco de la partoj: \(partoj.count)")
-				let signifoj = partoj[0].components(separatedBy: "\n").map {
-					Signifo($0)
+
+				let signifoVicoj = partoj[0].components(separatedBy: "\n")
+				let signifoj = signifoVicoj.map { (p: String) -> Signifo in
+					let s = p.components(separatedBy: "|")
+					logger.info(s.joined(separator: "_"))
+					return Signifo(s[0], Int(s[1])!, UInt8(s[2])!)
 				}
+
 				let vortĉenoj = partoj[1].components(separatedBy: "\n").filter {
 					$0.length > 0
 				}
@@ -27,22 +34,20 @@ class VortaroServico: Service {
 					let p = ĉ.components(separatedBy: " ")
 					return Vorto(
 						p[0],
-						signifo: signifoj[Int(p[2])!],
-						ecoj: UInt8(p[1])!
+						signifo: signifoj[Int(p[1])!]
 					)
 				}
 				for (i, ĉeno) in vortĉenoj.enumerated() {
 					let vorto = vortoj[i]
 					let p = ĉeno.components(separatedBy: " ").filter { $0.length > 0 }
-					if (p.count > 3) {
-						for r in p[3...] {
+					if (p.count > 2) {
+						for r in p[2...] {
 							let radiko = vortoj[Int(r)!]
 							radiko.idoj.append(vorto)
 							vorto.radikoj.append(radiko)
 						}
 					}
 				}
-				logger.info("Finita")
 				self.vortaro = Vortaro(vortoj: vortoj, signifoj: signifoj)
 				return self.vortaro!
 			}
